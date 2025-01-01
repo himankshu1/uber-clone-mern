@@ -1,8 +1,18 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { NextFunction } from "express";
 
-const userSchema = new mongoose.Schema(
+interface IUser extends Document {
+    fullName: string;
+    email: string;
+    password: string;
+    socketId: string;
+    generateAuthToken: () => string;
+    comparePassword: (password: string) => Promise<boolean>;
+}
+
+const userSchema = new mongoose.Schema<IUser>(
     {
         fullName: {
             type: String,
@@ -38,15 +48,17 @@ userSchema.methods.generateAuthToken = function () {
 };
 
 //* hashing password before save
-userSchema.pre("save", async function () {
+userSchema.pre("save", async function (next) {
     if (!this.isModified("password")) {
-        await bcrypt.hash(this.password, 10);
+        return next();
     }
+    this.password = await bcrypt.hash(this.password, 10);
+    next();
 });
 
 //* comparing password
 userSchema.methods.comparePassword = async function (password: string) {
-    await bcrypt.compare(password, this.password);
+    return await bcrypt.compare(password, this.password);
 };
 
-export const UserModel = mongoose.model("User", userSchema);
+export const UserModel = mongoose.model<IUser>("User", userSchema);
