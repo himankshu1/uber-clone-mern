@@ -1,7 +1,12 @@
 import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
 import { UserModel } from "../models/user.model";
-import { createUser, signInUser } from "../services/user.service";
+import {
+    createUser,
+    getUserProfileById,
+    signInUser,
+} from "../services/user.service";
 import { validationResult } from "express-validator";
+import { IAuthRequest } from "../middlewares/auth.middleware";
 
 //* registering the user
 export const registerUser: any = async (req: Request, res: Response) => {
@@ -74,4 +79,17 @@ export const loginUser: any = async (req: Request, res: Response) => {
                 data: {},
             });
     }
+};
+
+//* user profile
+export const getUserProfile: any = async (req: IAuthRequest, res: Response) => {
+    // validate request - done at middleware
+    // call service
+    // return response
+
+    const foundUser = await getUserProfileById(req.userId as string);
+
+    return res
+        .status(200)
+        .json({ success: true, message: "User found!", data: foundUser });
 };

@@ -1,4 +1,5 @@
 import { UserModel } from "../models/user.model";
+import jwt from "jsonwebtoken";
 
 type userData = {
     fullName: string;
@@ -53,4 +54,14 @@ export const signInUser = async (userData: Partial<userData>) => {
         console.log(`Error while logging in the user ${error}`);
         throw new Error(`Error while logging in the user ${error}`);
     }
+};
+
+export const getUserProfileById = async (userId: string) => {
+    const user = await UserModel.findById(userId).select("-password");
+
+    if (!user) {
+        return false;
+    }
+
+    return user;
 };
