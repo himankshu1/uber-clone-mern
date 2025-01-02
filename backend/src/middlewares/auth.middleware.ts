@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { BlacklistTokenModel } from "../models/blacklistToken.model";
 
 export interface IAuthRequest extends Request {
     userId?: string;
@@ -11,7 +12,12 @@ export const authUser: any = async (
     next: NextFunction
 ) => {
     const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
-    if (!token) {
+
+    const isTokenBlacklisted = await BlacklistTokenModel.findOne({
+        token: token,
+    });
+
+    if (!token || isTokenBlacklisted) {
         return res.status(401).json({
             success: false,
             message: "Unauthorised request. Please login again",

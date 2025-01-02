@@ -41,7 +41,7 @@ userSchema.methods.generateAuthToken = function () {
     const token = jwt.sign(
         { _id: this._id },
         process.env.JWT_SECRET_KEY as string,
-        { expiresIn: "15m" }
+        { expiresIn: "24h" }
     );
 
     return token;

@@ -7,6 +7,7 @@ import {
 } from "../services/user.service";
 import { validationResult } from "express-validator";
 import { IAuthRequest } from "../middlewares/auth.middleware";
+import { BlacklistTokenModel } from "../models/blacklistToken.model";
 
 //* registering the user
 export const registerUser: any = async (req: Request, res: Response) => {
@@ -92,4 +93,17 @@ export const getUserProfile: any = async (req: IAuthRequest, res: Response) => {
     return res
         .status(200)
         .json({ success: true, message: "User found!", data: foundUser });
+};
+
+//* logout user
+export const logoutUser = async (req: Request, res: Response) => {
+    res.clearCookie("token");
+    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+
+    await BlacklistTokenModel.create({ token });
+
+    res.status(200).json({
+        success: true,
+        message: "User logged out successfully",
+    });
 };
