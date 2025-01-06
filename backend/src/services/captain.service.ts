@@ -51,3 +51,33 @@ export const createCaptain = async (data: CaptainData) => {
         return { error };
     }
 };
+
+export const signInCaptain = async (data: Partial<CaptainData>) => {
+    try {
+        const { email, password } = data;
+
+        const isCaptainFound = await CaptainModel.findOne({ email }).select(
+            "+password"
+        );
+
+        if (!isCaptainFound) {
+            return { error: "User not found" };
+        }
+
+        const isPasswordCorrect = await isCaptainFound.comparePassword(
+            password as string
+        );
+
+        if (!isPasswordCorrect) {
+            return { error: "Either email or password is incorrect" };
+        }
+
+        //* generating a token
+        const token = isCaptainFound.generateAuthToken();
+
+        return { token, isCaptainFound };
+    } catch (error) {
+        console.log("Error while signing in: ", error);
+        return { error };
+    }
+};
