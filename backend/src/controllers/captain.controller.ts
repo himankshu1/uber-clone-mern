@@ -54,5 +54,9 @@ export const loginCaptain: any = async (req: Request, res: Response) => {
 
     res.cookie("token", response.token, { secure: true, httpOnly: true })
         .status(200)
-        .json({ success: true, message: "Logged in successfully!" });
+        .json({
+            success: true,
+            message: "Logged in successfully!",
+            data: response.isCaptainFound,
+        });
 };

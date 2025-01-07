@@ -54,7 +54,7 @@ export const createCaptain = async (data: CaptainData) => {
 
 export const signInCaptain = async (data: Partial<CaptainData>) => {
     try {
-        const { email, password } = data;
+        const { email, password: inputPassword } = data;
 
         const isCaptainFound = await CaptainModel.findOne({ email }).select(
             "+password"
@@ -65,7 +65,7 @@ export const signInCaptain = async (data: Partial<CaptainData>) => {
         }
 
         const isPasswordCorrect = await isCaptainFound.comparePassword(
-            password as string
+            inputPassword as string
         );
 
         if (!isPasswordCorrect) {
@@ -74,6 +74,8 @@ export const signInCaptain = async (data: Partial<CaptainData>) => {
 
         //* generating a token
         const token = isCaptainFound.generateAuthToken();
+        // Convert Mongoose document to plain object to manipulate fields
+        const { password, ...captainData } = isCaptainFound.toObject();
 
         return { token, isCaptainFound };
     } catch (error) {
