@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { createCaptain, signInCaptain } from "../services/captain.service";
+import { IAuthRequest } from "../middlewares/auth.middleware";
+import { CaptainModel } from "../models/captain.model";
+import { BlacklistTokenModel } from "../models/blacklistToken.model";
 
 export const registerCaptain: any = async (req: Request, res: Response) => {
     // validate the request
@@ -59,4 +62,25 @@ export const loginCaptain: any = async (req: Request, res: Response) => {
             message: "Logged in successfully!",
             data: response.isCaptainFound,
         });
+};
+
+export const getCaptainProfile: any = async (
+    req: IAuthRequest,
+    res: Response
+) => {
+    const { userId } = req;
+
+    const captain = await CaptainModel.findById(userId).select("-password");
+
+    res.status(200).json({ success: true, data: captain });
+};
+
+export const logoutCaptain = async (req: Request, res: Response) => {
+    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+
+    await BlacklistTokenModel.create({ token });
+
+    res.clearCookie("token");
+
+    res.status(200).json({ success: true, message: "Logged out successfully" });
 };
