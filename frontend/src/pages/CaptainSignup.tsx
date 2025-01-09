@@ -93,7 +93,7 @@ export default function CaptainSignup() {
                 />
 
                 <button className="bg-black text-white px-6 py-4 w-full font-medium mt-2 mb-4">
-                    Login
+                    Create Account
                 </button>
 
                 <p className="text-center">

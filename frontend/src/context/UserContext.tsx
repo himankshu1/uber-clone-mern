@@ -1,6 +1,25 @@
-import { createContext, ReactNode, useState } from "react";
+import {
+    createContext,
+    ReactNode,
+    useState,
+    Dispatch,
+    SetStateAction,
+} from "react";
 
-export const UserDataContext = createContext({});
+type UserType = {
+    fullName: string;
+    email: string;
+};
+
+type UserContextType = {
+    user: UserType;
+    setUser: Dispatch<SetStateAction<UserType>>;
+};
+
+export const UserDataContext = createContext<UserContextType>({
+    user: { fullName: "", email: "" },
+    setUser: () => {},
+});
 
 export default function UserContext({ children }: { children: ReactNode }) {
     const [user, setUser] = useState({
@@ -9,7 +28,7 @@ export default function UserContext({ children }: { children: ReactNode }) {
     });
     return (
         <div>
-            <UserDataContext.Provider value={[user, setUser]}>
+            <UserDataContext.Provider value={{ user, setUser }}>
                 {children}
             </UserDataContext.Provider>
         </div>

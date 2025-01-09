@@ -1,5 +1,8 @@
-import { FormEventHandler, useState } from "react";
+import { FormEventHandler, useState, useContext } from "react";
 import { Link } from "react-router";
+import { useNavigate } from "react-router";
+import axios from "axios";
+import { UserDataContext } from "../context/UserContext";
 
 type FormDataType = {
     fullName: string;
@@ -16,10 +19,29 @@ export default function UserSignup() {
         confirmPassword: "",
     });
 
-    const submitHandler: FormEventHandler = (e) => {
+    const navigate = useNavigate();
+    const { user, setUser } = useContext(UserDataContext);
+
+    const submitHandler: FormEventHandler = async (e) => {
         e.preventDefault();
 
         console.log(formData);
+
+        const response = await axios.post(
+            `${import.meta.env.VITE_BASE_URL}/register`,
+            formData
+        );
+
+        //? user created successfully
+        if (response.status === 201) {
+            const newUser = response.data;
+            setUser(newUser);
+        }
+        //TODO saving user to context
+        //TODO navigate to home page
+        console.log(user);
+
+        navigate("/home");
     };
     return (
         <div className="p-7 flex flex-col justify-between h-screen">
@@ -93,7 +115,7 @@ export default function UserSignup() {
                 />
 
                 <button className="bg-black text-white px-6 py-4 w-full font-medium mt-2 mb-4">
-                    Login
+                    Create Account
                 </button>
 
                 <p className="text-center">
