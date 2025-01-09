@@ -1,13 +1,13 @@
 import { FormEvent, useState } from "react";
 import { Link } from "react-router";
 
-type FormData = {
+export type FormDataType = {
     email: string;
     password: string;
 };
 
 export default function UserLogin() {
-    const [formData, setFormData] = useState<FormData>({
+    const [formData, setFormData] = useState<FormDataType>({
         email: "",
         password: "",
     });
@@ -19,6 +19,10 @@ export default function UserLogin() {
     };
     return (
         <div className="p-7 flex flex-col justify-between h-screen">
+            <p className="text-2xl font-semibold text-zinc-700 underline">
+                Continue as User
+            </p>
+
             <form onSubmit={submitHandler}>
                 <h3 className="text-xl mb-2">What's your email?</h3>
                 <input
